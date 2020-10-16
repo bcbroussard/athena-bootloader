@@ -10,9 +10,18 @@ make clean
 # make atmega2560_w5200
 # make atmega2560_w5500
 #
-# make atmega328_ethernet
-#
-# make atmega328_w5100
+make atmega328_ethernet \
+MAC_ADDR="0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xF1" \
+IP_ADDR="192, 168, 1, 130" \
+GW_ADDR="192, 168, 1, 1" \
+SUB_MASK="255, 255, 255, 0"
+
+make atmega328_w5100 \
+MAC_ADDR="0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xF1" \
+IP_ADDR="192, 168, 1, 130" \
+GW_ADDR="192, 168, 1, 1" \
+SUB_MASK="255, 255, 255, 0"
+
 # make atmega328_w5200
 
 make atmega328_w5500 \

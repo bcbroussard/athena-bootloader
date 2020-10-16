@@ -161,24 +161,24 @@ SIZE    = $(GCCROOT)avr-size
 
 # Build with the debug messages enabled
 # Use it only if you have already seen the source code
-# debug328_w5100: TARGET = debug328_w5100
-# debug328_w5100: MCU_TARGET = atmega328p
-# debug328_w5100: CFLAGS += '-D__WIZ_W5100__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
-# debug328_w5100: AVR_FREQ = 16000000L
-# debug328_w5100: LDSECTIONS = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
-# debug328_w5100: $(PROGRAM)_debug328_w5100.hex
-# debug328_w5100: $(PROGRAM)_debug328_w5100.lst
-# debug328_w5100_isp: debug328_w5100
-# debug328_w5100_isp: TARGET = debug328_w5100
-# debug328_w5100_isp: MCU_TARGET = atmega328p
-# # Low power xtal (16MHz) 16KCK/14CK+65ms
-# debug328_w5100_isp: LFUSE = FF
-# # 4096 byte boot, SPIEN
-# # D8 = Erase EEPROM, D0 = Save EEPROM
-# debug328_w5100_isp: HFUSE = D0
-# # 2.7V brownout
-# debug328_w5100_isp: EFUSE = 05
-# debug328_w5100_isp: isp
+debug328_w5100: TARGET = debug328_w5100
+debug328_w5100: MCU_TARGET = atmega328p
+debug328_w5100: CFLAGS += '-D__WIZ_W5100__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
+debug328_w5100: AVR_FREQ = 16000000L
+debug328_w5100: LDSECTIONS = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
+debug328_w5100: $(PROGRAM)_debug328_w5100.hex
+debug328_w5100: $(PROGRAM)_debug328_w5100.lst
+debug328_w5100_isp: debug328_w5100
+debug328_w5100_isp: TARGET = debug328_w5100
+debug328_w5100_isp: MCU_TARGET = atmega328p
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+debug328_w5100_isp: LFUSE = FF
+# 4096 byte boot, SPIEN
+# D8 = Erase EEPROM, D0 = Save EEPROM
+debug328_w5100_isp: HFUSE = D0
+# 2.7V brownout
+debug328_w5100_isp: EFUSE = 05
+debug328_w5100_isp: isp
 
 # # Build with the debug messages enabled
 # # Use it only if you have already seen the source code
@@ -343,26 +343,26 @@ debug328_w5500_isp: isp
 # debug1284_w5500_isp: isp
 
 
-# # Atmega328 used on Arduino UNO and Arduino Ethernet
-# atmega328_w5100: EXT_OBJ = optiboot.o
-# atmega328_w5100: TARGET = atmega328_w5100
-# atmega328_w5100: MCU_TARGET = atmega328p
-# atmega328_w5100: CFLAGS += '-D__WIZ_W5100__' '-DBAUD_RATE=115200'
-# atmega328_w5100: AVR_FREQ = 16000000L
-# atmega328_w5100: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
-# atmega328_w5100: $(PROGRAM)_atmega328_w5100.hex
-# atmega328_w5100: $(PROGRAM)_atmega328_w5100.lst
-# atmega328_w5100_isp: atmega328_w5100
-# atmega328_w5100_isp: TARGET = atmega328_w5100
-# atmega328_w5100_isp: MCU_TARGET = atmega328p
-# # Low power xtal (16MHz) 16KCK/14CK+65ms
-# atmega328_w5100_isp: LFUSE = FF
-# # 4096 byte boot, SPIEN
-# # D8 = Erase EEPROM, D0 = Save EEPROM
-# atmega328_w5100_isp: HFUSE = D0
-# # 2.7V brownout
-# atmega328_w5100_isp: EFUSE = 05
-# atmega328_w5100_isp: isp
+# Atmega328 used on Arduino UNO and Arduino Ethernet
+atmega328_w5100: EXT_OBJ = optiboot.o
+atmega328_w5100: TARGET = atmega328_w5100
+atmega328_w5100: MCU_TARGET = atmega328p
+atmega328_w5100: CFLAGS += '-D__WIZ_W5100__' '-DBAUD_RATE=115200'
+atmega328_w5100: AVR_FREQ = 16000000L
+atmega328_w5100: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
+atmega328_w5100: $(PROGRAM)_atmega328_w5100.hex
+atmega328_w5100: $(PROGRAM)_atmega328_w5100.lst
+atmega328_w5100_isp: atmega328_w5100
+atmega328_w5100_isp: TARGET = atmega328_w5100
+atmega328_w5100_isp: MCU_TARGET = atmega328p
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+atmega328_w5100_isp: LFUSE = FF
+# 4096 byte boot, SPIEN
+# D8 = Erase EEPROM, D0 = Save EEPROM
+atmega328_w5100_isp: HFUSE = D0
+# 2.7V brownout
+atmega328_w5100_isp: EFUSE = 05
+atmega328_w5100_isp: isp
 
 # # Atmega328 used on Arduino UNO and Arduino Ethernet
 # atmega328_w5200: EXT_OBJ = optiboot.o
@@ -406,24 +406,24 @@ atmega328_w5500_isp: HFUSE = D0
 atmega328_w5500_isp: EFUSE = 05
 atmega328_w5500_isp: isp
 
-# atmega328_ethernet: TARGET = atmega328_ethernet
-# atmega328_ethernet: MCU_TARGET = atmega328p
-# atmega328_ethernet: CFLAGS += '-D__WIZ_W5100__' '-DARDUINO_ETHERNET' '-DBAUD_RATE=115200'
-# atmega328_ethernet: AVR_FREQ = 16000000L
-# atmega328_ethernet: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
-# atmega328_ethernet: $(PROGRAM)_atmega328_ethernet.hex
-# atmega328_ethernet: $(PROGRAM)_atmega328_ethernet.lst
-# atmega328_ethernet_isp: atmega328_ethernet
-# atmega328_ethernet_isp: TARGET = atmega328_ethernet
-# atmega328_ethernet_isp: MCU_TARGET = atmega328p
-# # Low power xtal (16MHz) 16KCK/14CK+65ms
-# atmega328_ethernet_isp: LFUSE = FF
-# # 4096 byte boot, SPIEN
-# # D8 = Erase EEPROM, D0 = Save EEPROM
-# atmega328_ethernet_isp: HFUSE = D0
-# # 2.7V brownout
-# atmega328_ethernet_isp: EFUSE = 05
-# atmega328_ethernet_isp: isp
+atmega328_ethernet: TARGET = atmega328_ethernet
+atmega328_ethernet: MCU_TARGET = atmega328p
+atmega328_ethernet: CFLAGS += '-D__WIZ_W5100__' '-DARDUINO_ETHERNET' '-DBAUD_RATE=115200'
+atmega328_ethernet: AVR_FREQ = 16000000L
+atmega328_ethernet: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
+atmega328_ethernet: $(PROGRAM)_atmega328_ethernet.hex
+atmega328_ethernet: $(PROGRAM)_atmega328_ethernet.lst
+atmega328_ethernet_isp: atmega328_ethernet
+atmega328_ethernet_isp: TARGET = atmega328_ethernet
+atmega328_ethernet_isp: MCU_TARGET = atmega328p
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+atmega328_ethernet_isp: LFUSE = FF
+# 4096 byte boot, SPIEN
+# D8 = Erase EEPROM, D0 = Save EEPROM
+atmega328_ethernet_isp: HFUSE = D0
+# 2.7V brownout
+atmega328_ethernet_isp: EFUSE = 05
+atmega328_ethernet_isp: isp
 
 # atmega32u4_w5100: EXT_OBJ = optiboot.o
 # atmega32u4_w5100: TARGET = atmega32u4_w5100
