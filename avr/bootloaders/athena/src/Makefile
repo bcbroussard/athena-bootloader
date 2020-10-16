@@ -37,8 +37,8 @@ PROGRAM    = athena
 # Uncomment this next lines to build within the arduino environment,
 # using the arduino-included avrgcc toolset (mac and pc)
 # ENV ?= arduino
-# ENV ?= arduinodev
-# OS ?= macosx
+ENV ?= arduinodev
+OS ?= macosx
 # OS ?= windows
 
 # enter the parameters for the avrdude isp tool
@@ -80,7 +80,7 @@ else ifeq ($(ENV), arduinodev)
 # Arduino IDE source code environment.  Use the unpacked compilers created
 # by the build (you'll need to do "ant build" first.)
 ifeq ($(OS), macosx)
-TOOLROOT = ../../../../build/macosx/work/Arduino.app/Contents/Resources/Java/hardware/tools
+TOOLROOT = /Applications/Arduino.app/Contents/Java/hardware/tools
 endif
 ifeq ($(OS), windows)
 TOOLROOT = ../../../../build/windows/work/hardware/tools
@@ -129,6 +129,25 @@ LIBS     =
 DEBUG_SETTINGS = '-DDEBUG_MAIN=1' '-DDEBUG_NET=1' '-DDEBUG_TFTP=1' '-DDEBUG_SPI=1'
 CC       = $(GCCROOT)avr-gcc
 
+# Configure IP
+# TODO: export these variables for proper sub-make file handling
+
+ifneq ($(MAC_ADDR),)
+	DEFS += -DMAC_ADDR='$(MAC_ADDR)'
+endif
+
+ifneq ($(IP_ADDR),)
+	DEFS += -DIP_ADDR='$(IP_ADDR)'
+endif
+
+ifneq ($(GW_ADDR),)
+	DEFS += -DGW_ADDR='$(GW_ADDR)'
+endif
+
+ifneq ($(SUB_MASK),)
+	DEFS += -DSUB_MASK='$(SUB_MASK)'
+endif
+
 # Override is only needed by avr-lib build system.
 
 override CFLAGS  = -g -Wall -Wextra -Wstrict-prototypes $(OPTIMIZE) $(INCLUDES) -mmcu=$(MCU_TARGET) -DF_CPU=$(AVR_FREQ) $(DEFS)
@@ -142,45 +161,45 @@ SIZE    = $(GCCROOT)avr-size
 
 # Build with the debug messages enabled
 # Use it only if you have already seen the source code
-debug328_w5100: TARGET = debug328_w5100
-debug328_w5100: MCU_TARGET = atmega328p
-debug328_w5100: CFLAGS += '-D__WIZ_W5100__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
-debug328_w5100: AVR_FREQ = 16000000L
-debug328_w5100: LDSECTIONS = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
-debug328_w5100: $(PROGRAM)_debug328_w5100.hex
-debug328_w5100: $(PROGRAM)_debug328_w5100.lst
-debug328_w5100_isp: debug328_w5100
-debug328_w5100_isp: TARGET = debug328_w5100
-debug328_w5100_isp: MCU_TARGET = atmega328p
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-debug328_w5100_isp: LFUSE = FF
-# 4096 byte boot, SPIEN
-# D8 = Erase EEPROM, D0 = Save EEPROM
-debug328_w5100_isp: HFUSE = D0
-# 2.7V brownout
-debug328_w5100_isp: EFUSE = 05
-debug328_w5100_isp: isp
+# debug328_w5100: TARGET = debug328_w5100
+# debug328_w5100: MCU_TARGET = atmega328p
+# debug328_w5100: CFLAGS += '-D__WIZ_W5100__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
+# debug328_w5100: AVR_FREQ = 16000000L
+# debug328_w5100: LDSECTIONS = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
+# debug328_w5100: $(PROGRAM)_debug328_w5100.hex
+# debug328_w5100: $(PROGRAM)_debug328_w5100.lst
+# debug328_w5100_isp: debug328_w5100
+# debug328_w5100_isp: TARGET = debug328_w5100
+# debug328_w5100_isp: MCU_TARGET = atmega328p
+# # Low power xtal (16MHz) 16KCK/14CK+65ms
+# debug328_w5100_isp: LFUSE = FF
+# # 4096 byte boot, SPIEN
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# debug328_w5100_isp: HFUSE = D0
+# # 2.7V brownout
+# debug328_w5100_isp: EFUSE = 05
+# debug328_w5100_isp: isp
 
-# Build with the debug messages enabled
-# Use it only if you have already seen the source code
-debug328_w5200: TARGET = debug328_w5200
-debug328_w5200: MCU_TARGET = atmega328p
-debug328_w5200: CFLAGS += '-D__WIZ_W5200__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
-debug328_w5200: AVR_FREQ = 16000000L
-debug328_w5200: LDSECTIONS = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
-debug328_w5200: $(PROGRAM)_debug328_w5200.hex
-debug328_w5200: $(PROGRAM)_debug328_w5200.lst
-debug328_w5200_isp: debug328_w5200
-debug328_w5200_isp: TARGET = debug328_w5200
-debug328_w5200_isp: MCU_TARGET = atmega328p
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-debug328_w5200_isp: LFUSE = FF
-# 4096 byte boot, SPIEN
-# D8 = Erase EEPROM, D0 = Save EEPROM
-debug328_w5200_isp: HFUSE = D0
-# 2.7V brownout
-debug328_w5200_isp: EFUSE = 05
-debug328_w5200_isp: isp
+# # Build with the debug messages enabled
+# # Use it only if you have already seen the source code
+# debug328_w5200: TARGET = debug328_w5200
+# debug328_w5200: MCU_TARGET = atmega328p
+# debug328_w5200: CFLAGS += '-D__WIZ_W5200__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
+# debug328_w5200: AVR_FREQ = 16000000L
+# debug328_w5200: LDSECTIONS = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
+# debug328_w5200: $(PROGRAM)_debug328_w5200.hex
+# debug328_w5200: $(PROGRAM)_debug328_w5200.lst
+# debug328_w5200_isp: debug328_w5200
+# debug328_w5200_isp: TARGET = debug328_w5200
+# debug328_w5200_isp: MCU_TARGET = atmega328p
+# # Low power xtal (16MHz) 16KCK/14CK+65ms
+# debug328_w5200_isp: LFUSE = FF
+# # 4096 byte boot, SPIEN
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# debug328_w5200_isp: HFUSE = D0
+# # 2.7V brownout
+# debug328_w5200_isp: EFUSE = 05
+# debug328_w5200_isp: isp
 
 # Build with the debug messages enabled
 # Use it only if you have already seen the source code
@@ -203,168 +222,168 @@ debug328_w5500_isp: HFUSE = D0
 debug328_w5500_isp: EFUSE = 05
 debug328_w5500_isp: isp
 
-# Debug build for Arduino Mega2560
-debug2560_w5100: TARGET = debug2560_w5100
-debug2560_w5100: MCU_TARGET = atmega2560
-debug2560_w5100: CFLAGS += '-D__WIZ_W5100__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
-debug2560_w5100: AVR_FREQ = 16000000L
-debug2560_w5100: LDSECTIONS  = -Wl,--section-start=.text=0x3e000
-debug2560_w5100: $(PROGRAM)_debug2560_w5100.hex
-debug2560_w5100: $(PROGRAM)_debug2560_w5100.lst
-debug2560_w5100_isp: debug2560_w5100
-debug2560_w5100_isp: TARGET = debug2560_w5100
-debug2560_w5100_isp: MCU_TARGET = atmega2560
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-debug2560_w5100_isp: LFUSE = FF
-# 4069 byte boot
-# D8 = Erase EEPROM, D0 = Save EEPROM
-debug2560_w5100_isp: HFUSE = D0
-# 2.7V brownout
-debug2560_w5100_isp: EFUSE = FD
-debug2560_w5100_isp: isp
+# # Debug build for Arduino Mega2560
+# debug2560_w5100: TARGET = debug2560_w5100
+# debug2560_w5100: MCU_TARGET = atmega2560
+# debug2560_w5100: CFLAGS += '-D__WIZ_W5100__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
+# debug2560_w5100: AVR_FREQ = 16000000L
+# debug2560_w5100: LDSECTIONS  = -Wl,--section-start=.text=0x3e000
+# debug2560_w5100: $(PROGRAM)_debug2560_w5100.hex
+# debug2560_w5100: $(PROGRAM)_debug2560_w5100.lst
+# debug2560_w5100_isp: debug2560_w5100
+# debug2560_w5100_isp: TARGET = debug2560_w5100
+# debug2560_w5100_isp: MCU_TARGET = atmega2560
+# # Low power xtal (16MHz) 16KCK/14CK+65ms
+# debug2560_w5100_isp: LFUSE = FF
+# # 4069 byte boot
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# debug2560_w5100_isp: HFUSE = D0
+# # 2.7V brownout
+# debug2560_w5100_isp: EFUSE = FD
+# debug2560_w5100_isp: isp
 
-# Debug build for Arduino Mega2560
-debug2560_w5200: TARGET = debug2560_w5200
-debug2560_w5200: MCU_TARGET = atmega2560
-debug2560_w5200: CFLAGS += '-D__WIZ_W5200__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
-debug2560_w5200: AVR_FREQ = 16000000L
-debug2560_w5200: LDSECTIONS  = -Wl,--section-start=.text=0x3e000
-debug2560_w5200: $(PROGRAM)_debug2560_w5200.hex
-debug2560_w5200: $(PROGRAM)_debug2560_w5200.lst
-debug2560_w5200_isp: debug2560_w5200
-debug2560_w5200_isp: TARGET = debug2560_w5200
-debug2560_w5200_isp: MCU_TARGET = atmega2560
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-debug2560_w5200_isp: LFUSE = FF
-# 4069 byte boot
-# D8 = Erase EEPROM, D0 = Save EEPROM
-debug2560_w5200_isp: HFUSE = D0
-# 2.7V brownout
-debug2560_w5200_isp: EFUSE = FD
-debug2560_w5200_isp: isp
+# # Debug build for Arduino Mega2560
+# debug2560_w5200: TARGET = debug2560_w5200
+# debug2560_w5200: MCU_TARGET = atmega2560
+# debug2560_w5200: CFLAGS += '-D__WIZ_W5200__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
+# debug2560_w5200: AVR_FREQ = 16000000L
+# debug2560_w5200: LDSECTIONS  = -Wl,--section-start=.text=0x3e000
+# debug2560_w5200: $(PROGRAM)_debug2560_w5200.hex
+# debug2560_w5200: $(PROGRAM)_debug2560_w5200.lst
+# debug2560_w5200_isp: debug2560_w5200
+# debug2560_w5200_isp: TARGET = debug2560_w5200
+# debug2560_w5200_isp: MCU_TARGET = atmega2560
+# # Low power xtal (16MHz) 16KCK/14CK+65ms
+# debug2560_w5200_isp: LFUSE = FF
+# # 4069 byte boot
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# debug2560_w5200_isp: HFUSE = D0
+# # 2.7V brownout
+# debug2560_w5200_isp: EFUSE = FD
+# debug2560_w5200_isp: isp
 
-# Debug build for Arduino Mega2560
-debug2560_w5500: TARGET = debug2560_w5500
-debug2560_w5500: MCU_TARGET = atmega2560
-debug2560_w5500: CFLAGS += '-D__WIZ_W5500__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
-debug2560_w5500: AVR_FREQ = 16000000L
-debug2560_w5500: LDSECTIONS  = -Wl,--section-start=.text=0x3e000
-debug2560_w5500: $(PROGRAM)_debug2560_w5500.hex
-debug2560_w5500: $(PROGRAM)_debug2560_w5500.lst
-debug2560_w5500_isp: debug2560_w5500
-debug2560_w5500_isp: TARGET = debug2560_w5500
-debug2560_w5500_isp: MCU_TARGET = atmega2560
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-debug2560_w5500_isp: LFUSE = FF
-# 4069 byte boot
-# D8 = Erase EEPROM, D0 = Save EEPROM
-debug2560_w5500_isp: HFUSE = D0
-# 2.7V brownout
-debug2560_w5500_isp: EFUSE = FD
-debug2560_w5500_isp: isp
+# # Debug build for Arduino Mega2560
+# debug2560_w5500: TARGET = debug2560_w5500
+# debug2560_w5500: MCU_TARGET = atmega2560
+# debug2560_w5500: CFLAGS += '-D__WIZ_W5500__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
+# debug2560_w5500: AVR_FREQ = 16000000L
+# debug2560_w5500: LDSECTIONS  = -Wl,--section-start=.text=0x3e000
+# debug2560_w5500: $(PROGRAM)_debug2560_w5500.hex
+# debug2560_w5500: $(PROGRAM)_debug2560_w5500.lst
+# debug2560_w5500_isp: debug2560_w5500
+# debug2560_w5500_isp: TARGET = debug2560_w5500
+# debug2560_w5500_isp: MCU_TARGET = atmega2560
+# # Low power xtal (16MHz) 16KCK/14CK+65ms
+# debug2560_w5500_isp: LFUSE = FF
+# # 4069 byte boot
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# debug2560_w5500_isp: HFUSE = D0
+# # 2.7V brownout
+# debug2560_w5500_isp: EFUSE = FD
+# debug2560_w5500_isp: isp
 
-# Debug build for Atmega1284
-debug1284_w5100: TARGET = debug1284_w5100
-debug1284_w5100: MCU_TARGET = atmega1284p
-debug1284_w5100: CFLAGS += '-D__WIZ_W5100__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
-debug1284_w5100: AVR_FREQ = 16000000L
-debug1284_w5100: LDSECTIONS  = -Wl,--section-start=.text=0x1e000
-debug1284_w5100: $(PROGRAM)_debug1284_w5100.hex
-debug1284_w5100: $(PROGRAM)_debug1284_w5100.lst
-debug1284_w5100_isp: debug1284_w5100
-debug1284_w5100_isp: TARGET = debug1284_w5100
-debug1284_w5100_isp: MCU_TARGET = atmega1284p
-# External power xtal (16MHz) 16KCK/14CK+65ms
-debug1284_w5100_isp: LFUSE = FF
-# 4096 word boot
-# D8 = Erase EEPROM, D0 = Save EEPROM
-debug1284_w5100_isp: HFUSE = D0
-# 2.7V brownout
-debug1284_w5100_isp: EFUSE = FD
-debug1284_w5100_isp: isp
+# # Debug build for Atmega1284
+# debug1284_w5100: TARGET = debug1284_w5100
+# debug1284_w5100: MCU_TARGET = atmega1284p
+# debug1284_w5100: CFLAGS += '-D__WIZ_W5100__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
+# debug1284_w5100: AVR_FREQ = 16000000L
+# debug1284_w5100: LDSECTIONS  = -Wl,--section-start=.text=0x1e000
+# debug1284_w5100: $(PROGRAM)_debug1284_w5100.hex
+# debug1284_w5100: $(PROGRAM)_debug1284_w5100.lst
+# debug1284_w5100_isp: debug1284_w5100
+# debug1284_w5100_isp: TARGET = debug1284_w5100
+# debug1284_w5100_isp: MCU_TARGET = atmega1284p
+# # External power xtal (16MHz) 16KCK/14CK+65ms
+# debug1284_w5100_isp: LFUSE = FF
+# # 4096 word boot
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# debug1284_w5100_isp: HFUSE = D0
+# # 2.7V brownout
+# debug1284_w5100_isp: EFUSE = FD
+# debug1284_w5100_isp: isp
 
-# Debug build for Atmega1284
-debug1284_w5200: TARGET = debug1284_w5200
-debug1284_w5200: MCU_TARGET = atmega1284p
-debug1284_w5200: CFLAGS += '-D__WIZ_W5200__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
-debug1284_w5200: AVR_FREQ = 16000000L
-debug1284_w5200: LDSECTIONS  = -Wl,--section-start=.text=0x1e000
-debug1284_w5200: $(PROGRAM)_debug1284_w5200.hex
-debug1284_w5200: $(PROGRAM)_debug1284_w5200.lst
-debug1284_w5200_isp: debug1284_w5200
-debug1284_w5200_isp: TARGET = debug1284_w5200
-debug1284_w5200_isp: MCU_TARGET = atmega1284p
-# External power xtal (16MHz) 16KCK/14CK+65ms
-debug1284_w5200_isp: LFUSE = FF
-# 4096 word boot
-# D8 = Erase EEPROM, D0 = Save EEPROM
-debug1284_w5200_isp: HFUSE = D0
-# 2.7V brownout
-debug1284_w5200_isp: EFUSE = FD
-debug1284_w5200_isp: isp
+# # Debug build for Atmega1284
+# debug1284_w5200: TARGET = debug1284_w5200
+# debug1284_w5200: MCU_TARGET = atmega1284p
+# debug1284_w5200: CFLAGS += '-D__WIZ_W5200__' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
+# debug1284_w5200: AVR_FREQ = 16000000L
+# debug1284_w5200: LDSECTIONS  = -Wl,--section-start=.text=0x1e000
+# debug1284_w5200: $(PROGRAM)_debug1284_w5200.hex
+# debug1284_w5200: $(PROGRAM)_debug1284_w5200.lst
+# debug1284_w5200_isp: debug1284_w5200
+# debug1284_w5200_isp: TARGET = debug1284_w5200
+# debug1284_w5200_isp: MCU_TARGET = atmega1284p
+# # External power xtal (16MHz) 16KCK/14CK+65ms
+# debug1284_w5200_isp: LFUSE = FF
+# # 4096 word boot
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# debug1284_w5200_isp: HFUSE = D0
+# # 2.7V brownout
+# debug1284_w5200_isp: EFUSE = FD
+# debug1284_w5200_isp: isp
 
-# Debug build for Atmega1284
-debug1284_w5500: TARGET = debug1284_w5500
-debug1284_w5500: MCU_TARGET = atmega1284p
-debug1284_w5500: CFLAGS += '-D__WIZ_W5500__' '-DDEBUG_MAIN=1' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
-debug1284_w5500: AVR_FREQ = 16000000L
-debug1284_w5500: LDSECTIONS  = -Wl,--section-start=.text=0x1e000
-debug1284_w5500: $(PROGRAM)_debug1284_w5500.hex
-debug1284_w5500: $(PROGRAM)_debug1284_w5500.lst
-debug1284_w5500_isp: debug1284_w5500
-debug1284_w5500_isp: TARGET = debug1284_w5500
-debug1284_w5500_isp: MCU_TARGET = atmega1284p
-# External power xtal (16MHz) 16KCK/14CK+65ms
-debug1284_w5500_isp: LFUSE = FF
-# 4096 word boot
-# D8 = Erase EEPROM, D0 = Save EEPROM
-debug1284_w5500_isp: HFUSE = D0
-# 2.7V brownout
-debug1284_w5500_isp: EFUSE = FD
-debug1284_w5500_isp: isp
+# # Debug build for Atmega1284
+# debug1284_w5500: TARGET = debug1284_w5500
+# debug1284_w5500: MCU_TARGET = atmega1284p
+# debug1284_w5500: CFLAGS += '-D__WIZ_W5500__' '-DDEBUG_MAIN=1' $(DEBUG_SETTINGS) '-DBAUD_RATE=115200'
+# debug1284_w5500: AVR_FREQ = 16000000L
+# debug1284_w5500: LDSECTIONS  = -Wl,--section-start=.text=0x1e000
+# debug1284_w5500: $(PROGRAM)_debug1284_w5500.hex
+# debug1284_w5500: $(PROGRAM)_debug1284_w5500.lst
+# debug1284_w5500_isp: debug1284_w5500
+# debug1284_w5500_isp: TARGET = debug1284_w5500
+# debug1284_w5500_isp: MCU_TARGET = atmega1284p
+# # External power xtal (16MHz) 16KCK/14CK+65ms
+# debug1284_w5500_isp: LFUSE = FF
+# # 4096 word boot
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# debug1284_w5500_isp: HFUSE = D0
+# # 2.7V brownout
+# debug1284_w5500_isp: EFUSE = FD
+# debug1284_w5500_isp: isp
 
 
-# Atmega328 used on Arduino UNO and Arduino Ethernet
-atmega328_w5100: EXT_OBJ = optiboot.o
-atmega328_w5100: TARGET = atmega328_w5100
-atmega328_w5100: MCU_TARGET = atmega328p
-atmega328_w5100: CFLAGS += '-D__WIZ_W5100__' '-DBAUD_RATE=115200'
-atmega328_w5100: AVR_FREQ = 16000000L
-atmega328_w5100: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
-atmega328_w5100: $(PROGRAM)_atmega328_w5100.hex
-atmega328_w5100: $(PROGRAM)_atmega328_w5100.lst
-atmega328_w5100_isp: atmega328_w5100
-atmega328_w5100_isp: TARGET = atmega328_w5100
-atmega328_w5100_isp: MCU_TARGET = atmega328p
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-atmega328_w5100_isp: LFUSE = FF
-# 4096 byte boot, SPIEN
-# D8 = Erase EEPROM, D0 = Save EEPROM
-atmega328_w5100_isp: HFUSE = D0
-# 2.7V brownout
-atmega328_w5100_isp: EFUSE = 05
-atmega328_w5100_isp: isp
+# # Atmega328 used on Arduino UNO and Arduino Ethernet
+# atmega328_w5100: EXT_OBJ = optiboot.o
+# atmega328_w5100: TARGET = atmega328_w5100
+# atmega328_w5100: MCU_TARGET = atmega328p
+# atmega328_w5100: CFLAGS += '-D__WIZ_W5100__' '-DBAUD_RATE=115200'
+# atmega328_w5100: AVR_FREQ = 16000000L
+# atmega328_w5100: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
+# atmega328_w5100: $(PROGRAM)_atmega328_w5100.hex
+# atmega328_w5100: $(PROGRAM)_atmega328_w5100.lst
+# atmega328_w5100_isp: atmega328_w5100
+# atmega328_w5100_isp: TARGET = atmega328_w5100
+# atmega328_w5100_isp: MCU_TARGET = atmega328p
+# # Low power xtal (16MHz) 16KCK/14CK+65ms
+# atmega328_w5100_isp: LFUSE = FF
+# # 4096 byte boot, SPIEN
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# atmega328_w5100_isp: HFUSE = D0
+# # 2.7V brownout
+# atmega328_w5100_isp: EFUSE = 05
+# atmega328_w5100_isp: isp
 
-# Atmega328 used on Arduino UNO and Arduino Ethernet
-atmega328_w5200: EXT_OBJ = optiboot.o
-atmega328_w5200: TARGET = atmega328_w5200
-atmega328_w5200: MCU_TARGET = atmega328p
-atmega328_w5200: CFLAGS += '-D__WIZ_W5200__' '-DBAUD_RATE=115200'
-atmega328_w5200: AVR_FREQ = 16000000L
-atmega328_w5200: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
-atmega328_w5200: $(PROGRAM)_atmega328_w5200.hex
-atmega328_w5200: $(PROGRAM)_atmega328_w5200.lst
-atmega328_w5200_isp: atmega328_w5200
-atmega328_w5200_isp: TARGET = atmega328_w5200
-atmega328_w5200_isp: MCU_TARGET = atmega328p
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-atmega328_w5200_isp: LFUSE = FF
-# 4096 byte boot, SPIEN
-# D8 = Erase EEPROM, D0 = Save EEPROM
-atmega328_w5200_isp: HFUSE = D0
-# 2.7V brownout
-atmega328_w5200_isp: EFUSE = 05
-atmega328_w5200_isp: isp
+# # Atmega328 used on Arduino UNO and Arduino Ethernet
+# atmega328_w5200: EXT_OBJ = optiboot.o
+# atmega328_w5200: TARGET = atmega328_w5200
+# atmega328_w5200: MCU_TARGET = atmega328p
+# atmega328_w5200: CFLAGS += '-D__WIZ_W5200__' '-DBAUD_RATE=115200'
+# atmega328_w5200: AVR_FREQ = 16000000L
+# atmega328_w5200: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
+# atmega328_w5200: $(PROGRAM)_atmega328_w5200.hex
+# atmega328_w5200: $(PROGRAM)_atmega328_w5200.lst
+# atmega328_w5200_isp: atmega328_w5200
+# atmega328_w5200_isp: TARGET = atmega328_w5200
+# atmega328_w5200_isp: MCU_TARGET = atmega328p
+# # Low power xtal (16MHz) 16KCK/14CK+65ms
+# atmega328_w5200_isp: LFUSE = FF
+# # 4096 byte boot, SPIEN
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# atmega328_w5200_isp: HFUSE = D0
+# # 2.7V brownout
+# atmega328_w5200_isp: EFUSE = 05
+# atmega328_w5200_isp: isp
 
 # Atmega328 used on Arduino UNO and Arduino Ethernet
 atmega328_w5500: EXT_OBJ = optiboot.o
@@ -387,202 +406,202 @@ atmega328_w5500_isp: HFUSE = D0
 atmega328_w5500_isp: EFUSE = 05
 atmega328_w5500_isp: isp
 
-atmega328_ethernet: TARGET = atmega328_ethernet
-atmega328_ethernet: MCU_TARGET = atmega328p
-atmega328_ethernet: CFLAGS += '-D__WIZ_W5100__' '-DARDUINO_ETHERNET' '-DBAUD_RATE=115200'
-atmega328_ethernet: AVR_FREQ = 16000000L
-atmega328_ethernet: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
-atmega328_ethernet: $(PROGRAM)_atmega328_ethernet.hex
-atmega328_ethernet: $(PROGRAM)_atmega328_ethernet.lst
-atmega328_ethernet_isp: atmega328_ethernet
-atmega328_ethernet_isp: TARGET = atmega328_ethernet
-atmega328_ethernet_isp: MCU_TARGET = atmega328p
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-atmega328_ethernet_isp: LFUSE = FF
-# 4096 byte boot, SPIEN
-# D8 = Erase EEPROM, D0 = Save EEPROM
-atmega328_ethernet_isp: HFUSE = D0
-# 2.7V brownout
-atmega328_ethernet_isp: EFUSE = 05
-atmega328_ethernet_isp: isp
+# atmega328_ethernet: TARGET = atmega328_ethernet
+# atmega328_ethernet: MCU_TARGET = atmega328p
+# atmega328_ethernet: CFLAGS += '-D__WIZ_W5100__' '-DARDUINO_ETHERNET' '-DBAUD_RATE=115200'
+# atmega328_ethernet: AVR_FREQ = 16000000L
+# atmega328_ethernet: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
+# atmega328_ethernet: $(PROGRAM)_atmega328_ethernet.hex
+# atmega328_ethernet: $(PROGRAM)_atmega328_ethernet.lst
+# atmega328_ethernet_isp: atmega328_ethernet
+# atmega328_ethernet_isp: TARGET = atmega328_ethernet
+# atmega328_ethernet_isp: MCU_TARGET = atmega328p
+# # Low power xtal (16MHz) 16KCK/14CK+65ms
+# atmega328_ethernet_isp: LFUSE = FF
+# # 4096 byte boot, SPIEN
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# atmega328_ethernet_isp: HFUSE = D0
+# # 2.7V brownout
+# atmega328_ethernet_isp: EFUSE = 05
+# atmega328_ethernet_isp: isp
 
-atmega32u4_w5100: EXT_OBJ = optiboot.o
-atmega32u4_w5100: TARGET = atmega32u4_w5100
-atmega32u4_w5100: MCU_TARGET = atmega32u4
-atmega32u4_w5100: CFLAGS += '-D__WIZ_W5100__' '-DBAUD_RATE=115200'
-atmega32u4_w5100: AVR_FREQ = 16000000L
-atmega32u4_w5100: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
-atmega32u4_w5100: $(PROGRAM)_atmega32u4_w5100.hex
-atmega32u4_w5100: $(PROGRAM)_atmega32u4_w5100.lst
-atmega32u4_w5100_isp: atmega32u4_w5100
-atmega32u4_w5100_isp: TARGET = atmega32u4_w5100
-atmega32u4_w5100_isp: MCU_TARGET = atmega32u4
-# Fuse settings from 32u4 Caterina bootloader
-atmega32u4_w5100_isp: LFUSE = FF
-# D8 = Erase EEPROM, D0 = Save EEPROM
-atmega32u4_w5100_isp: HFUSE = D0
-atmega32u4_w5100_isp: EFUSE = CB
-atmega32u4_w5100_isp: isp
+# atmega32u4_w5100: EXT_OBJ = optiboot.o
+# atmega32u4_w5100: TARGET = atmega32u4_w5100
+# atmega32u4_w5100: MCU_TARGET = atmega32u4
+# atmega32u4_w5100: CFLAGS += '-D__WIZ_W5100__' '-DBAUD_RATE=115200'
+# atmega32u4_w5100: AVR_FREQ = 16000000L
+# atmega32u4_w5100: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
+# atmega32u4_w5100: $(PROGRAM)_atmega32u4_w5100.hex
+# atmega32u4_w5100: $(PROGRAM)_atmega32u4_w5100.lst
+# atmega32u4_w5100_isp: atmega32u4_w5100
+# atmega32u4_w5100_isp: TARGET = atmega32u4_w5100
+# atmega32u4_w5100_isp: MCU_TARGET = atmega32u4
+# # Fuse settings from 32u4 Caterina bootloader
+# atmega32u4_w5100_isp: LFUSE = FF
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# atmega32u4_w5100_isp: HFUSE = D0
+# atmega32u4_w5100_isp: EFUSE = CB
+# atmega32u4_w5100_isp: isp
 
-atmega32u4_w5200: EXT_OBJ = optiboot.o
-atmega32u4_w5200: TARGET = atmega32u4_w5200
-atmega32u4_w5200: MCU_TARGET = atmega32u4
-atmega32u4_w5200: CFLAGS += '-D__WIZ_W5200__' '-DBAUD_RATE=115200'
-atmega32u4_w5200: AVR_FREQ = 16000000L
-atmega32u4_w5200: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
-atmega32u4_w5200: $(PROGRAM)_atmega32u4_w5200.hex
-atmega32u4_w5200: $(PROGRAM)_atmega32u4_w5200.lst
-atmega32u4_w5200_isp: atmega32u4_w5200
-atmega32u4_w5200_isp: TARGET = atmega32u4_w5200
-atmega32u4_w5200_isp: MCU_TARGET = atmega32u4
-# Fuse settings from 32u4 Caterina bootloader
-atmega32u4_w5200_isp: LFUSE = FF
-# D8 = Erase EEPROM, D0 = Save EEPROM
-atmega32u4_w5200_isp: HFUSE = D0
-atmega32u4_w5200_isp: EFUSE = CB
-atmega32u4_w5200_isp: isp
+# atmega32u4_w5200: EXT_OBJ = optiboot.o
+# atmega32u4_w5200: TARGET = atmega32u4_w5200
+# atmega32u4_w5200: MCU_TARGET = atmega32u4
+# atmega32u4_w5200: CFLAGS += '-D__WIZ_W5200__' '-DBAUD_RATE=115200'
+# atmega32u4_w5200: AVR_FREQ = 16000000L
+# atmega32u4_w5200: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
+# atmega32u4_w5200: $(PROGRAM)_atmega32u4_w5200.hex
+# atmega32u4_w5200: $(PROGRAM)_atmega32u4_w5200.lst
+# atmega32u4_w5200_isp: atmega32u4_w5200
+# atmega32u4_w5200_isp: TARGET = atmega32u4_w5200
+# atmega32u4_w5200_isp: MCU_TARGET = atmega32u4
+# # Fuse settings from 32u4 Caterina bootloader
+# atmega32u4_w5200_isp: LFUSE = FF
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# atmega32u4_w5200_isp: HFUSE = D0
+# atmega32u4_w5200_isp: EFUSE = CB
+# atmega32u4_w5200_isp: isp
 
-atmega32u4_w5500: EXT_OBJ = optiboot.o
-atmega32u4_w5500: TARGET = atmega32u4_w5500
-atmega32u4_w5500: MCU_TARGET = atmega32u4
-atmega32u4_w5500: CFLAGS += '-D__WIZ_W5500__' '-DBAUD_RATE=115200'
-atmega32u4_w5500: AVR_FREQ = 16000000L
-atmega32u4_w5500: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
-atmega32u4_w5500: $(PROGRAM)_atmega32u4_w5500.hex
-atmega32u4_w5500: $(PROGRAM)_atmega32u4_w5500.lst
-atmega32u4_w5500_isp: atmega32u4_w5500
-atmega32u4_w5500_isp: TARGET = atmega32u4_w5500
-atmega32u4_w5500_isp: MCU_TARGET = atmega32u4
-# Fuse settings from 32u4 Caterina bootloader
-atmega32u4_w5500_isp: LFUSE = FF
-# D8 = Erase EEPROM, D0 = Save EEPROM
-atmega32u4_w5500_isp: HFUSE = D0
-atmega32u4_w5500_isp: EFUSE = CB
-atmega32u4_w5500_isp: isp
-
-
-# Mega has a minimum boot size of 1024 bytes
-atmega2560_w5100: TARGET = atmega2560_w5100
-atmega2560_w5100: MCU_TARGET = atmega2560
-atmega2560_w5100: CFLAGS += '-D__WIZ_W5100__' '-DBAUD_RATE=115200'
-atmega2560_w5100: AVR_FREQ = 16000000L
-atmega2560_w5100: LDSECTIONS  = -Wl,--section-start=.text=0x3e000
-atmega2560_w5100: $(PROGRAM)_atmega2560_w5100.hex
-atmega2560_w5100: $(PROGRAM)_atmega2560_w5100.lst
-atmega2560_w5100_isp: atmega2560_w5100
-atmega2560_w5100_isp: TARGET = atmega2560_w5100
-atmega2560_w5100_isp: MCU_TARGET = atmega2560
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-atmega2560_w5100_isp: LFUSE = FF
-# 4069 byte boot
-# D8 = Erase EEPROM, D0 = Save EEPROM
-atmega2560_w5100_isp: HFUSE = D0
-# 2.7V brownout
-atmega2560_w5100_isp: EFUSE = FD
-atmega2560_w5100_isp: isp
+# atmega32u4_w5500: EXT_OBJ = optiboot.o
+# atmega32u4_w5500: TARGET = atmega32u4_w5500
+# atmega32u4_w5500: MCU_TARGET = atmega32u4
+# atmega32u4_w5500: CFLAGS += '-D__WIZ_W5500__' '-DBAUD_RATE=115200'
+# atmega32u4_w5500: AVR_FREQ = 16000000L
+# atmega32u4_w5500: LDSECTIONS  = -Wl,--section-start=.text=0x7000 #-Wl,--section-start=.version=0x7ffe
+# atmega32u4_w5500: $(PROGRAM)_atmega32u4_w5500.hex
+# atmega32u4_w5500: $(PROGRAM)_atmega32u4_w5500.lst
+# atmega32u4_w5500_isp: atmega32u4_w5500
+# atmega32u4_w5500_isp: TARGET = atmega32u4_w5500
+# atmega32u4_w5500_isp: MCU_TARGET = atmega32u4
+# # Fuse settings from 32u4 Caterina bootloader
+# atmega32u4_w5500_isp: LFUSE = FF
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# atmega32u4_w5500_isp: HFUSE = D0
+# atmega32u4_w5500_isp: EFUSE = CB
+# atmega32u4_w5500_isp: isp
 
 
-# Mega has a minimum boot size of 1024 bytes
-atmega2560_w5200: TARGET = atmega2560_w5200
-atmega2560_w5200: MCU_TARGET = atmega2560
-atmega2560_w5200: CFLAGS += '-D__WIZ_W5200__' '-DBAUD_RATE=115200'
-atmega2560_w5200: AVR_FREQ = 16000000L
-atmega2560_w5200: LDSECTIONS  = -Wl,--section-start=.text=0x3e000
-atmega2560_w5200: $(PROGRAM)_atmega2560_w5200.hex
-atmega2560_w5200: $(PROGRAM)_atmega2560_w5200.lst
-atmega2560_w5200_isp: atmega2560_w5200
-atmega2560_w5200_isp: TARGET = atmega2560_w5200
-atmega2560_w5200_isp: MCU_TARGET = atmega2560
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-atmega2560_w5200_isp: LFUSE = FF
-# 4069 byte boot
-# D8 = Erase EEPROM, D0 = Save EEPROM
-atmega2560_w5200_isp: HFUSE = D0
-# 2.7V brownout
-atmega2560_w5200_isp: EFUSE = FD
-atmega2560_w5200_isp: isp
+# # Mega has a minimum boot size of 1024 bytes
+# atmega2560_w5100: TARGET = atmega2560_w5100
+# atmega2560_w5100: MCU_TARGET = atmega2560
+# atmega2560_w5100: CFLAGS += '-D__WIZ_W5100__' '-DBAUD_RATE=115200'
+# atmega2560_w5100: AVR_FREQ = 16000000L
+# atmega2560_w5100: LDSECTIONS  = -Wl,--section-start=.text=0x3e000
+# atmega2560_w5100: $(PROGRAM)_atmega2560_w5100.hex
+# atmega2560_w5100: $(PROGRAM)_atmega2560_w5100.lst
+# atmega2560_w5100_isp: atmega2560_w5100
+# atmega2560_w5100_isp: TARGET = atmega2560_w5100
+# atmega2560_w5100_isp: MCU_TARGET = atmega2560
+# # Low power xtal (16MHz) 16KCK/14CK+65ms
+# atmega2560_w5100_isp: LFUSE = FF
+# # 4069 byte boot
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# atmega2560_w5100_isp: HFUSE = D0
+# # 2.7V brownout
+# atmega2560_w5100_isp: EFUSE = FD
+# atmega2560_w5100_isp: isp
 
 
-# Mega has a minimum boot size of 1024 bytes
-atmega2560_w5500: TARGET = atmega2560_w5500
-atmega2560_w5500: MCU_TARGET = atmega2560
-atmega2560_w5500: CFLAGS += '-D__WIZ_W5500__' '-DBAUD_RATE=115200'
-atmega2560_w5500: AVR_FREQ = 16000000L
-atmega2560_w5500: LDSECTIONS  = -Wl,--section-start=.text=0x3e000
-atmega2560_w5500: $(PROGRAM)_atmega2560_w5500.hex
-atmega2560_w5500: $(PROGRAM)_atmega2560_w5500.lst
-atmega2560_w5500_isp: atmega2560_w5500
-atmega2560_w5500_isp: TARGET = atmega2560_w5500
-atmega2560_w5500_isp: MCU_TARGET = atmega2560
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-atmega2560_w5500_isp: LFUSE = FF
-# 4069 byte boot
-# D8 = Erase EEPROM, D0 = Save EEPROM
-atmega2560_w5500_isp: HFUSE = D0
-# 2.7V brownout
-atmega2560_w5500_isp: EFUSE = FD
-atmega2560_w5500_isp: isp
+# # Mega has a minimum boot size of 1024 bytes
+# atmega2560_w5200: TARGET = atmega2560_w5200
+# atmega2560_w5200: MCU_TARGET = atmega2560
+# atmega2560_w5200: CFLAGS += '-D__WIZ_W5200__' '-DBAUD_RATE=115200'
+# atmega2560_w5200: AVR_FREQ = 16000000L
+# atmega2560_w5200: LDSECTIONS  = -Wl,--section-start=.text=0x3e000
+# atmega2560_w5200: $(PROGRAM)_atmega2560_w5200.hex
+# atmega2560_w5200: $(PROGRAM)_atmega2560_w5200.lst
+# atmega2560_w5200_isp: atmega2560_w5200
+# atmega2560_w5200_isp: TARGET = atmega2560_w5200
+# atmega2560_w5200_isp: MCU_TARGET = atmega2560
+# # Low power xtal (16MHz) 16KCK/14CK+65ms
+# atmega2560_w5200_isp: LFUSE = FF
+# # 4069 byte boot
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# atmega2560_w5200_isp: HFUSE = D0
+# # 2.7V brownout
+# atmega2560_w5200_isp: EFUSE = FD
+# atmega2560_w5200_isp: isp
 
 
-# Atmega1284
-atmega1284_w5100: TARGET = atmega1284_w5100
-atmega1284_w5100: MCU_TARGET = atmega1284p
-atmega1284_w5100: CFLAGS += '-D__WIZ_W5100__' '-DBAUD_RATE=115200'
-atmega1284_w5100: AVR_FREQ = 16000000L
-atmega1284_w5100: LDSECTIONS  = -Wl,--section-start=.text=0x1e000
-atmega1284_w5100: $(PROGRAM)_atmega1284_w5100.hex
-atmega1284_w5100: $(PROGRAM)_atmega1284_w5100.lst
-atmega1284_w5100_isp: atmega1284_w5100
-atmega1284_w5100_isp: TARGET = atmega1284_w5100
-atmega1284_w5100_isp: MCU_TARGET = atmega1284p
-# External power xtal (16MHz) 16KCK/14CK+65ms
-atmega1284_w5100_isp: LFUSE = FF
-# 4096 word boot
-# D8 = Erase EEPROM, D0 = Save EEPROM
-atmega1284_w5100_isp: HFUSE = D0
-# 2.7V brownout
-atmega1284_w5100_isp: EFUSE = FD
-atmega1284_w5100_isp: isp
+# # Mega has a minimum boot size of 1024 bytes
+# atmega2560_w5500: TARGET = atmega2560_w5500
+# atmega2560_w5500: MCU_TARGET = atmega2560
+# atmega2560_w5500: CFLAGS += '-D__WIZ_W5500__' '-DBAUD_RATE=115200'
+# atmega2560_w5500: AVR_FREQ = 16000000L
+# atmega2560_w5500: LDSECTIONS  = -Wl,--section-start=.text=0x3e000
+# atmega2560_w5500: $(PROGRAM)_atmega2560_w5500.hex
+# atmega2560_w5500: $(PROGRAM)_atmega2560_w5500.lst
+# atmega2560_w5500_isp: atmega2560_w5500
+# atmega2560_w5500_isp: TARGET = atmega2560_w5500
+# atmega2560_w5500_isp: MCU_TARGET = atmega2560
+# # Low power xtal (16MHz) 16KCK/14CK+65ms
+# atmega2560_w5500_isp: LFUSE = FF
+# # 4069 byte boot
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# atmega2560_w5500_isp: HFUSE = D0
+# # 2.7V brownout
+# atmega2560_w5500_isp: EFUSE = FD
+# atmega2560_w5500_isp: isp
 
 
-atmega1284_w5200: TARGET = atmega1284_w5200
-atmega1284_w5200: MCU_TARGET = atmega1284p
-atmega1284_w5200: CFLAGS += '-D__WIZ_W5200__' '-DBAUD_RATE=115200'
-atmega1284_w5200: AVR_FREQ = 16000000L
-atmega1284_w5200: LDSECTIONS  = -Wl,--section-start=.text=0x1e000
-atmega1284_w5200: $(PROGRAM)_atmega1284_w5200.hex
-atmega1284_w5200: $(PROGRAM)_atmega1284_w5200.lst
-atmega1284_w5200_isp: atmega1284_w5200
-atmega1284_w5200_isp: TARGET = atmega1284_w5200
-atmega1284_w5200_isp: MCU_TARGET = atmega1284p
-# External power xtal (16MHz) 16KCK/14CK+65ms
-atmega1284_w5200_isp: LFUSE = FF
-# 4096 word boot
-# D8 = Erase EEPROM, D0 = Save EEPROM
-atmega1284_w5200_isp: HFUSE = D0
-# 2.7V brownout
-atmega1284_w5200_isp: EFUSE = FD
-atmega1284_w5200_isp: isp
+# # Atmega1284
+# atmega1284_w5100: TARGET = atmega1284_w5100
+# atmega1284_w5100: MCU_TARGET = atmega1284p
+# atmega1284_w5100: CFLAGS += '-D__WIZ_W5100__' '-DBAUD_RATE=115200'
+# atmega1284_w5100: AVR_FREQ = 16000000L
+# atmega1284_w5100: LDSECTIONS  = -Wl,--section-start=.text=0x1e000
+# atmega1284_w5100: $(PROGRAM)_atmega1284_w5100.hex
+# atmega1284_w5100: $(PROGRAM)_atmega1284_w5100.lst
+# atmega1284_w5100_isp: atmega1284_w5100
+# atmega1284_w5100_isp: TARGET = atmega1284_w5100
+# atmega1284_w5100_isp: MCU_TARGET = atmega1284p
+# # External power xtal (16MHz) 16KCK/14CK+65ms
+# atmega1284_w5100_isp: LFUSE = FF
+# # 4096 word boot
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# atmega1284_w5100_isp: HFUSE = D0
+# # 2.7V brownout
+# atmega1284_w5100_isp: EFUSE = FD
+# atmega1284_w5100_isp: isp
 
 
-atmega1284_w5500: TARGET = atmega1284_w5500
-atmega1284_w5500: MCU_TARGET = atmega1284p
-atmega1284_w5500: CFLAGS += '-D__WIZ_W5500__' '-DBAUD_RATE=115200'
-atmega1284_w5500: AVR_FREQ = 16000000L
-atmega1284_w5500: LDSECTIONS  = -Wl,--section-start=.text=0x1e000
-atmega1284_w5500: $(PROGRAM)_atmega1284_w5500.hex
-atmega1284_w5500: $(PROGRAM)_atmega1284_w5500.lst
-atmega1284_w5500_isp: atmega1284_w5500
-atmega1284_w5500_isp: TARGET = atmega1284_w5500
-atmega1284_w5500_isp: MCU_TARGET = atmega1284p
-# External power xtal (16MHz) 16KCK/14CK+65ms
-atmega1284_w5500_isp: LFUSE = FF
-# 4096 word boot
-# D8 = Erase EEPROM, D0 = Save EEPROM
-atmega1284_w5500_isp: HFUSE = D0
-# 2.7V brownout
-atmega1284_w5500_isp: EFUSE = FD
-atmega1284_w5500_isp: isp
+# atmega1284_w5200: TARGET = atmega1284_w5200
+# atmega1284_w5200: MCU_TARGET = atmega1284p
+# atmega1284_w5200: CFLAGS += '-D__WIZ_W5200__' '-DBAUD_RATE=115200'
+# atmega1284_w5200: AVR_FREQ = 16000000L
+# atmega1284_w5200: LDSECTIONS  = -Wl,--section-start=.text=0x1e000
+# atmega1284_w5200: $(PROGRAM)_atmega1284_w5200.hex
+# atmega1284_w5200: $(PROGRAM)_atmega1284_w5200.lst
+# atmega1284_w5200_isp: atmega1284_w5200
+# atmega1284_w5200_isp: TARGET = atmega1284_w5200
+# atmega1284_w5200_isp: MCU_TARGET = atmega1284p
+# # External power xtal (16MHz) 16KCK/14CK+65ms
+# atmega1284_w5200_isp: LFUSE = FF
+# # 4096 word boot
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# atmega1284_w5200_isp: HFUSE = D0
+# # 2.7V brownout
+# atmega1284_w5200_isp: EFUSE = FD
+# atmega1284_w5200_isp: isp
+
+
+# atmega1284_w5500: TARGET = atmega1284_w5500
+# atmega1284_w5500: MCU_TARGET = atmega1284p
+# atmega1284_w5500: CFLAGS += '-D__WIZ_W5500__' '-DBAUD_RATE=115200'
+# atmega1284_w5500: AVR_FREQ = 16000000L
+# atmega1284_w5500: LDSECTIONS  = -Wl,--section-start=.text=0x1e000
+# atmega1284_w5500: $(PROGRAM)_atmega1284_w5500.hex
+# atmega1284_w5500: $(PROGRAM)_atmega1284_w5500.lst
+# atmega1284_w5500_isp: atmega1284_w5500
+# atmega1284_w5500_isp: TARGET = atmega1284_w5500
+# atmega1284_w5500_isp: MCU_TARGET = atmega1284p
+# # External power xtal (16MHz) 16KCK/14CK+65ms
+# atmega1284_w5500_isp: LFUSE = FF
+# # 4096 word boot
+# # D8 = Erase EEPROM, D0 = Save EEPROM
+# atmega1284_w5500_isp: HFUSE = D0
+# # 2.7V brownout
+# atmega1284_w5500_isp: EFUSE = FD
+# atmega1284_w5500_isp: isp
 
 #
 # Generic build targets
